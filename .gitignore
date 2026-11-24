@@ -1,6 +1,8 @@
 # Defaults for Python; JupterNotebooks; VSCode
 # Created by https://www.toptal.com/developers/gitignore/api
 
+.devcontainer
+
 ### JupyterNotebooks ###
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
