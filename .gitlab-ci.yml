@@ -1,5 +1,0 @@
-runner-check:
-  image: python:3.13-slim
-  script:
-    - echo "Runner is working"
-    - python --version
