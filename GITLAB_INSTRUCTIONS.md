@@ -1,5 +1,24 @@
 # GitLab CI/CD Lab Instructions
 
+- [GitLab CI/CD Lab Instructions](#gitlab-cicd-lab-instructions)
+  - [Learning objectives](#learning-objectives)
+  - [1. Fork the example](#1-fork-the-example)
+  - [2. Enable CI/CD](#2-enable-cicd)
+  - [3. Check for an instance runner](#3-check-for-an-instance-runner)
+  - [4. Add a pipeline configuration file](#4-add-a-pipeline-configuration-file)
+  - [5. Add a simple first job](#5-add-a-simple-first-job)
+  - [6. Execute the Python program](#6-execute-the-python-program)
+  - [7. Automate unit tests](#7-automate-unit-tests)
+  - [8. Investigate a failing test](#8-investigate-a-failing-test)
+  - [9. Add linting and parallel execution](#9-add-linting-and-parallel-execution)
+  - [10. Configure triggers and rules](#10-configure-triggers-and-rules)
+  - [11. Include the documentation build and deployment jobs](#11-include-the-documentation-build-and-deployment-jobs)
+  - [12. Retrieve the documentation artifact](#12-retrieve-the-documentation-artifact)
+  - [13. View the deployed documentation (optional)](#13-view-the-deployed-documentation-optional)
+  - [14. Update the documentation and observe the pipeline](#14-update-the-documentation-and-observe-the-pipeline)
+  - [Useful references](#useful-references)
+
+
 In this lab you will create a CI/CD pipeline for a small Python project. You will start with a single job, then add automated code checks, tests, documentation generation and deployment to GitLab Pages.
 
 You do not need to install Python, Git or Docker on your own computer. All the core exercises can be completed through the GitLab web interface.
@@ -30,7 +49,7 @@ The repository contains the following files and directories (other files may als
 
 | File or directory | Purpose |
 | --- | --- |
-| `src/hello.py` | A small Python greeting program. |
+| `src/example/hello.py` | A small Python greeting program. |
 | `tests/test_hello.py` | Unit tests for the program. |
 | `scripts/lint.sh` | Runs the linter (Ruff). |
 | `scripts/test.sh` | Runs the unit tests (pytest). |
@@ -38,6 +57,8 @@ The repository contains the following files and directories (other files may als
 | `docs/source/` | Documentation source and configuration. |
 | `deploy/gitlab-pages.yml` | Supplied documentation build and deployment jobs. |
 | `pyproject.toml` | Python version, pinned dependencies and tool configuration. |
+
+Note that the directory `.github` and its contents are not required for the GitLab version of this lab and may safely be deleted.
 
 Open the Python program, tests and scripts in the repository to see what they do. You do not need to change them yet.
 
@@ -92,7 +113,7 @@ Committing through the web interface updates the remote repository directly. It 
 
 With this basic configuration, a push to the branch triggers a pipeline automatically.
 
-### Inspect the pipeline
+Inspect the pipeline:
 
 1. Navigate to **Build > Pipelines**.
 2. Open the newest pipeline by selecting its status or ID.
@@ -144,7 +165,7 @@ test:
   before_script:
     - python --version
     - python -m pip install --upgrade pip
-    - python -m pip install --group dev
+    - python -m pip install --group dev -e .
   script:
     - bash scripts/test.sh
 ```
@@ -158,14 +179,14 @@ The `before_script` commands install the development tools defined in `pyproject
 
 ## 8. Investigate a failing test
 
-1. Open `src/hello.py` and edit the greeting returned by `greet()`. For example, change `Hello` to `Goodbye`, without changing the function signature.
+1. Open `src/example/hello.py` and edit the greeting returned by `greet()`. For example, change `Hello` to `Bonjour`, without changing the function signature.
 2. Commit the change to `main` with the message `Introduce deliberate test failure`.
 3. Open the newest pipeline and its `test` job log.
 4. Locate the failed assertion and compare the expected and actual values.
 
 pytest returns a non-zero exit code when tests fail. The job and pipeline should therefore fail. The commit itself is still present in the repository: a push-triggered pipeline runs after the commit reaches GitLab.
 
-Now restore the original greeting in `src/hello.py`, commit the fix, and inspect the next pipeline.
+Now restore the original greeting in `src/example/hello.py`, commit the fix, and inspect the next pipeline.
 
 **Checkpoint:** You should have a failed pipeline followed by a successful pipeline. You have diagnosed and fixed a failure without changing the CI/CD configuration.
 
@@ -182,7 +203,7 @@ default:
   before_script:
     - python --version
     - python -m pip install --upgrade pip
-    - python -m pip install --group dev
+    - python -m pip install --group dev -e .
 
 lint:
   stage: validate
@@ -272,7 +293,7 @@ default:
   before_script:
     - python --version
     - python -m pip install --upgrade pip
-    - python -m pip install --group dev
+    - python -m pip install --group dev -e .
 
 lint:
   stage: validate
@@ -299,7 +320,7 @@ Commit and inspect the pipeline. You should see the following logical execution 
 |Stage|	Pages enabled	|Pages unavailable|
 |--|--|--|
 |validate|	lint, test|	lint, test|
-|build|	build-docs|	build-docs
+|build|	build-docs|	build-docs|
 |deploy	|deploy-pages	|Not included|
 
 
@@ -336,9 +357,9 @@ If deployment fails because Pages is unavailable, return to section 11 and follo
 
 Checkpoint: Open your deployed documentation website and locate the API reference and build provenance.
 
-### 14. Update the documentation and observe the pipeline
+## 14. Update the documentation and observe the pipeline
 
-1. Open `src/hello.py`.
+1. Open `src/example/hello.py`.
 2. Modify the `greet()` docstring, leaving the function's behaviour unchanged. For example, add a short explanatory sentence.
 3. Commit to `main`.
 4. Observe validation and documentation build in the new pipeline.

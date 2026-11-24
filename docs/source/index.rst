@@ -17,7 +17,6 @@ accompanied by automated tests.
    :collapsible: open
 
    * **Release:** |release|
-   * **Version:** |version|
    * **Commit:** |commit|
    * **branch:** |branch|
    * **Build date:** |today|

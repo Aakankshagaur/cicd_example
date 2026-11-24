@@ -9,7 +9,7 @@ The project contains a simple "hello world" function, unit tests, documentation,
 This repository accompanies the CI/CD practical session. Follow the separate lab instructions for your chosen CI/CD platform:
 
 - [GitLab CI/CD](GITLAB_INSTRUCTIONS.md)
-- [GitHub Actions](GITLAB_INSTRUCTIONS.md)
+- [GitHub Actions](GITHUB_INSTRUCTIONS.md)
 
 The repository intentionally does not contain a complete pipeline configuration. You will develop this during the lab.
 
@@ -43,7 +43,7 @@ Install the development dependencies:
 
 ```bash
 python -m pip install --upgrade pip
-python -m pip install --group dev
+python -m pip install --group dev -e .
 ```
 
 ## Running the program

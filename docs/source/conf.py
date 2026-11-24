@@ -3,10 +3,6 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -22,7 +18,6 @@ release = '0.1.0'
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
-    "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
 ]
 
@@ -64,9 +59,11 @@ from pathlib import Path
 
 
 def get_short_commit() -> str:
-    # Prefer GitLab CI var if available.
+    # Prefer commit metadata supplied by the CI platform.
     if commit := os.environ.get("CI_COMMIT_SHORT_SHA"):
         return commit
+    if commit := os.environ.get("GITHUB_SHA"):
+        return commit[:8]
 
     # Otherwise retrieve it from the local Git repository.
     try:
@@ -81,8 +78,12 @@ def get_short_commit() -> str:
 
 
 def get_git_branch() -> str:
-    # Prefer GitLab CI var if available.
+    # GITHUB_HEAD_REF identifies the source branch for pull requests.
     if branch := os.environ.get("CI_COMMIT_REF_NAME"):
+        return branch
+    if branch := os.environ.get("GITHUB_HEAD_REF"):
+        return branch
+    if branch := os.environ.get("GITHUB_REF_NAME"):
         return branch
 
     try:

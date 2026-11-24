@@ -4,5 +4,5 @@ API Reference
 Hello module
 ------------
 
-.. automodule:: src.example.hello
+.. automodule:: example.hello
    :members:
