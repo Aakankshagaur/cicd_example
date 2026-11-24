@@ -1,4 +1,4 @@
-from src.hello import greet
+from src.example.hello import greet
 
 
 def test_default_greeting() -> None:
